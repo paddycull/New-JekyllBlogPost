@@ -7,7 +7,7 @@
     Date: 2020-03-17
     
     .EXAMPLE
-    New-JekyllBlogPost -PostTitle "My First Blogpost" -Tags "powershell", "automation"
+    New-JekyllBlogPost -PostTitle "My First Blogpost" -Categories "PowerShell", "Jekyll" -Tags "automation"
 
     This example creates the md file with "My First Blogpost" as the title with the powershell and automation tags.
     It uses the current datetime as the date in the md file and the filename itself.
@@ -18,8 +18,11 @@ function New-JekyllBlogPost {
         [Parameter(Mandatory)]
         [string] $PostTitle,
 
-        #Tags for the blog bost.
-        [string[]] $tags,
+        #Categories for the post
+        [string[]] $Categories,
+
+        #Tags for the post.
+        [string[]] $Tags,
 
         #Timestamp used on the blogpost.
         [string] $datetime = (Get-Date -Format "yyyy-MM-dd HH:mm:ss"),
@@ -31,7 +34,8 @@ function New-JekyllBlogPost {
         [switch] $DoNotOpen
     )
     #Join the tags so they're in the correct format for the md file.
-    $tagsjoined = $tags -join ', '
+    $TagsJoined = ($Tags -join ', ').ToLower()
+    $CategoriesJoined = $Categories -join ', '
 
     #This is what the md file gets created with.
     $CreateString = @"
@@ -39,7 +43,8 @@ function New-JekyllBlogPost {
 layout: post
 title: $PostTitle
 date: $datetime
-tags: [$tagsjoined]
+categories: [$CategoriesJoined]
+tags: [$TagsJoined]
 ---
 "@
 
@@ -59,7 +64,7 @@ tags: [$tagsjoined]
     }
 
     #Create the file, needs to be encoded with ascii to work with Jekyll.
-    $CreateString | Out-File "$LocalPostDirectory\${PostDateForFile}${PostTitle}.md" -Encoding ascii
+    $CreateString | $BlogFilePath -Encoding ascii
 
     #Open the file unless user specified not to.
     if(!$DoNotOpen) {
