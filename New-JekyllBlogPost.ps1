@@ -45,6 +45,7 @@ title: $PostTitle
 date: $datetime
 categories: [$CategoriesJoined]
 tags: [$TagsJoined]
+comments: true
 ---
 "@
 
@@ -64,7 +65,7 @@ tags: [$TagsJoined]
     }
 
     #Create the file, needs to be encoded with ascii to work with Jekyll.
-    $CreateString | $BlogFilePath -Encoding ascii
+    $CreateString | Out-File $BlogFilePath -Encoding ascii
 
     #Open the file unless user specified not to.
     if(!$DoNotOpen) {
