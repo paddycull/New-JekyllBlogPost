@@ -28,11 +28,15 @@ function New-JekyllBlogPost {
         [string] $datetime = (Get-Date -Format "yyyy-MM-dd HH:mm:ss"),
 
         #Local directory of jekyll posts. File gets created here.
-        [string] $LocalPostDirectory = "C:\GitHub\paddycull.github.io\_posts",
+        [string] $LocalSiteDirectory = "C:\GitHub\paddycull.github.io",
 
         #By default the function autommatically opens the md file when it's created. This switch stops that.
         [switch] $DoNotOpen
     )
+
+    $LocalPostDirectory = "$LocalSiteDirectory\_posts"
+    $LocalImageRootDirectory = "$LocalSiteDirectory\assets\img\posts\"
+
     #Join the tags so they're in the correct format for the md file.
     $TagsJoined = ($Tags -join ', ').ToLower()
     $CategoriesJoined = $Categories -join ', '
@@ -45,10 +49,10 @@ function New-JekyllBlogPost {
 
     #Create images folder as well.
     $JoinedPostTitle = ("${PostDateForFile}${PostTitle}" -replace ' ', '_')
-    $LocalImageFolder = "C:\GitHub\paddycull.github.io\assets\img\posts\" + $JoinedPostTitle
-    New-Item $LocalImageFolder -ItemType Directory -Force | Out-Null
+    $LocalPostImageDirectory = $LocalImageRootDirectory + $JoinedPostTitle
+    New-Item $LocalPostImageDirectory -ItemType Directory -Force | Out-Null
 
-    $RelativeImageFolder = "/assets/img/posts/$JoinedPostTitle"
+    $RelativeImageDirectory = "/assets/img/posts/$JoinedPostTitle"
 
     #This is what the md file gets created with.
     $CreateString = @"
@@ -59,7 +63,7 @@ date: $datetime
 categories: [$CategoriesJoined]
 tags: [$TagsJoined]
 comments: true
-imgpath: $RelativeImageFolder
+imgpath: $RelativeImageDirectory
 ---
 "@
 
