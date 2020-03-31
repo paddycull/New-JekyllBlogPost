@@ -37,6 +37,19 @@ function New-JekyllBlogPost {
     $TagsJoined = ($Tags -join ', ').ToLower()
     $CategoriesJoined = $Categories -join ', '
 
+    #Get the current date in the format required for the filename.
+    $PostDateForFile = (Get-Date -Format "yyyy-MM-dd").ToString() + "-"
+
+    #Full path for the file being created.
+    $BlogFilePath = "$LocalPostDirectory\${PostDateForFile}${PostTitle}.md"
+
+    #Create images folder as well.
+    $JoinedPostTitle = ("${PostDateForFile}${PostTitle}" -replace ' ', '_')
+    $LocalImageFolder = "C:\GitHub\paddycull.github.io\assets\img\posts\" + $JoinedPostTitle
+    New-Item $LocalImageFolder -ItemType Directory -Force | Out-Null
+
+    $RelativeImageFolder = "/assets/img/posts/$JoinedPostTitle"
+
     #This is what the md file gets created with.
     $CreateString = @"
 ---
@@ -46,14 +59,9 @@ date: $datetime
 categories: [$CategoriesJoined]
 tags: [$TagsJoined]
 comments: true
+imgpath: $RelativeImageFolder
 ---
 "@
-
-    #Get the current date in the format required for the filename.
-    $PostDateForFile = (Get-Date -Format "yyyy-MM-dd").ToString() + "-"
-
-    #Full path for the file being created.
-    $BlogFilePath = "$LocalPostDirectory\${PostDateForFile}${PostTitle}.md"
 
     #If the file already exists, prompt the user before overwriting.
     if(Test-Path $BlogFilePath) {
